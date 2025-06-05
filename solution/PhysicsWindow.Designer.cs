@@ -1,6 +1,6 @@
 ﻿namespace solution;
 
-partial class Form1
+partial class PhysicsWindow
 {
     /// <summary>
     ///  Required designer variable.
@@ -31,13 +31,13 @@ partial class Form1
     {
         SuspendLayout();
         // 
-        // Form1
+        // PhysicsWindow
         // 
         AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         ClientSize = new System.Drawing.Size(800, 450);
-        Text = "Form1";
-        Load += Form1_Load;
+        Text = "PhysicsWindow";
+        Load += PhysicsWindow_Load;
         ResumeLayout(false);
     }
 
