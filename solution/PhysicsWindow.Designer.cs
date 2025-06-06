@@ -37,7 +37,7 @@ partial class PhysicsWindow
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         ClientSize = new System.Drawing.Size(800, 450);
         Text = "PhysicsWindow";
-        Load += PhysicsWindow_Load;
+        Paint += PhysicsWindow_Paint;
         ResumeLayout(false);
     }
 
