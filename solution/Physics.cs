@@ -7,11 +7,11 @@ public class PhysicsScene
     public PhysicsHandler PhysicsHandler = new();
     private List<PhysicsObject> _physicsObjects = new();
 
-    public void Update(double deltaTime)
+    public void Update()
     {
         for (int i = 0; i < _physicsObjects.Count; i++)
         {
-            _physicsObjects[i].Update(deltaTime);
+            _physicsObjects[i].Update();
             for (int j = i + 1; j < _physicsObjects.Count; j++)
             {
                 PhysicsHandler.CheckParticleCollisions(_physicsObjects[i], _physicsObjects[j]);
@@ -66,9 +66,10 @@ public class PhysicsObject(string label, Vector2 pos)
     public Vector2 Position = pos, Velocity = Vector2.Zero, ResultantForce = Vector2.Zero;
     public float Mass = 1;
     
-    public void Update(double deltaTime)
+    public void Update()
     {
         Position += Velocity;
+        
     }
     
     public class Particle(string label, Vector2 pos) : PhysicsObject(label, pos)

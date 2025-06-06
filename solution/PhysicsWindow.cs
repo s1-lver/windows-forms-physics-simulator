@@ -21,7 +21,7 @@ public partial class PhysicsWindow : Form
         _timer.Interval = 16;
         _timer.Tick += (s, e) =>
         {
-            _scene.Update(_timer.Interval * 0.001);
+            _scene.Update();
             Invalidate();
         };
         _timer.Start();
