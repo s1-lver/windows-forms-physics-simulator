@@ -23,6 +23,7 @@ public static class Draw
         {
             if (obj is PhysicsObject.Particle)
             {
+                if (obj.ObjectLabel == "B") brush.Color = Color.Red;
                 graphicsHandler.FillEllipse(brush, obj.Position.X, obj.Position.Y, ParticleProperties["Size"], ParticleProperties["Size"]);
                 // Label
                 var offsetPos = obj.Position + ParticleProperties["LabelOffset"];

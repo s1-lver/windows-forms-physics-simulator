@@ -4,9 +4,10 @@ namespace solution;
 
 public class PhysicsScene
 {
-    public PhysicsHandler PhysicsHandler = new();
+    public PhysicsHandler PhysHandler = new();
     private List<PhysicsObject> _physicsObjects = new();
 
+    static int _updateNo = 0;
     public void Update()
     {
         for (int i = 0; i < _physicsObjects.Count; i++)
@@ -14,9 +15,12 @@ public class PhysicsScene
             _physicsObjects[i].Update();
             for (int j = i + 1; j < _physicsObjects.Count; j++)
             {
-                PhysicsHandler.CheckParticleCollisions(_physicsObjects[i], _physicsObjects[j]);
+                PhysHandler.CheckParticleCollisions(_physicsObjects[i], _physicsObjects[j]);
             }
         }
+        
+        PhysHandler.Update();
+        _updateNo++;
     }
 
     public List<PhysicsObject> GetObjectsInScene()
@@ -32,32 +36,37 @@ public class PhysicsScene
     {
         _physicsObjects.Remove(physicsObject);
     }
-}
-
-public class PhysicsHandler(int gStrength = 10)
-{
-    public int GravitationalStrength = gStrength;
     
-    public bool CheckParticleCollisions(PhysicsObject object1, PhysicsObject object2)
+    public class PhysicsHandler()
     {
-        if (object1.Position == object2.Position || PhysicalMath.CheckParticlesWillPass(object1, object2))
-        {
+        private List<(int, PhysicsObject[])> _lastCollisions = new();
 
-            CollideParticles(object1, object2);
-            return true;
+        public void Update()
+        {
+            _lastCollisions = _lastCollisions.Where(x => x.Item1 != _updateNo - 1).ToList();
+        }
+        public bool CheckParticleCollisions(PhysicsObject object1, PhysicsObject object2)
+        {
+            if (_lastCollisions.Any(x => x.Item2.Contains(object1) && x.Item2.Contains(object2))) return false;
+            if (PhysicalMath.CheckParticlesWillPass(object1, object2))
+            {
+                CollideParticles(object1, object2);
+                return true;
+            }
+
+            return false;
         }
 
-        return false;
-    }
-
-    private void CollideParticles(PhysicsObject object1, PhysicsObject object2)
-    {
-        var (p_obj1, p_obj2) = PhysicalMath.ResolveMomentum(object1, object2);
+        private void CollideParticles(PhysicsObject object1, PhysicsObject object2)
+        {
+            var (v_obj1, v_obj2) = PhysicalMath.ResolveVelocityFromMomentum(object1, object2);
         
-        object1.Velocity = p_obj1 / object1.Mass;
-        object2.Velocity = p_obj2 / object2.Mass;
+            object1.Velocity = v_obj1;
+            object2.Velocity = v_obj2;
         
-        Console.WriteLine($"collision: {object1.Velocity}, {object2.Velocity}");
+            Console.WriteLine($"collision: {object1.Velocity}, {object2.Velocity}");
+            _lastCollisions.Add((_updateNo, [object1, object2]));
+        }
     }
 }
 public class PhysicsObject(string label, Vector2 pos)
@@ -69,7 +78,6 @@ public class PhysicsObject(string label, Vector2 pos)
     public void Update()
     {
         Position += Velocity;
-        
     }
     
     public class Particle(string label, Vector2 pos) : PhysicsObject(label, pos)
