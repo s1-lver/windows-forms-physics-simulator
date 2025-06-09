@@ -16,24 +16,27 @@ public static class PhysicalMath
         
         return (p_obj1, p_obj2);
     }
-
-    public static float GetInsideAngle(Vector2 vect)
+    
+    public static Vector3 CrossProduct(Vector2 v1, Vector2 v2, float threshold = 0.001f)
     {
-        var normVect = new Vector2(Math.Abs(vect.X), Math.Abs(vect.Y));
+        var result = new Vector3(0, 0, v1.X*v2.Y - v1.Y*v2.X);
+        if (result.Z <= threshold) return Vector3.Zero;
+        return result;
+    }
+    
+    public static bool CheckParticlesWillPass(PhysicsObject obj1, PhysicsObject obj2, float threshold = 0.001f)
+    {
+        var A = obj1.Position;
+        var B = obj1.Position + obj1.Velocity;
+        var C = obj2.Position;
         
-        return (float)Math.Atan(normVect.Y / normVect.X);
-    }
-
-    public static float GetDistance(Vector2 vect1, Vector2 vect2)
-    {
-        return (vect1 - vect2).Length();
-    }
-    public static bool CheckParticlesWillPass(PhysicsObject obj1, PhysicsObject obj2)
-    {
-        if (GetDistance(obj1.Position, obj2.Position) <= 1 && (GetInsideAngle(obj1.Velocity) < (float)Math.PI / 2 || GetInsideAngle(obj2.Velocity) < (float)Math.PI / 2))
+        if (CrossProduct(A - B, C - A) == Vector3.Zero)
         {
-            return true;
+            var Kac = Vector2.Dot(A - B, C - A);
+            var Kab = Vector2.Dot(A - B, A - B);
+            if (Kac >= 0 && Kab >= Kac) return true;
         }
+
         return false;
     }
 }
